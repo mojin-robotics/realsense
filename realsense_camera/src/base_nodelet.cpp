@@ -867,7 +867,7 @@ namespace realsense_camera
    */
   ros::Time BaseNodelet::getTimestamp(rs_stream stream_index, double frame_ts)
   {
-    //return ros::Time(camera_start_ts_) + ros::Duration(frame_ts * 0.001);
+    // return ros::Time(camera_start_ts_) + ros::Duration(frame_ts * 0.001);
     return ros::Time::now();
   }
 
