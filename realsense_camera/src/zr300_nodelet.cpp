@@ -641,7 +641,7 @@ namespace realsense_camera
     // call base nodelet method
     BaseNodelet::setFrameCallbacks();
 
-    if(enable_[RS_STREAM_FISHEYE])
+    if (enable_[RS_STREAM_FISHEYE])
     {
         fisheye_frame_handler_ = [&](rs::frame frame)  // NOLINT(build/c++11)
         {
@@ -654,7 +654,7 @@ namespace realsense_camera
       publishTopic(RS_STREAM_INFRARED2, frame);
     };
 
-    if(enable_[RS_STREAM_FISHEYE])
+    if (enable_[RS_STREAM_FISHEYE])
     {
         rs_set_frame_callback_cpp(rs_device_, RS_STREAM_FISHEYE,
           new rs::frame_callback(fisheye_frame_handler_), &rs_error_);
@@ -680,7 +680,7 @@ namespace realsense_camera
     }
     checkError();
 
-    if(enable_[RS_STREAM_FISHEYE])
+    if (enable_[RS_STREAM_FISHEYE])
     {
       // Get offset between base frame and fisheye frame
       rs_get_device_extrinsics(rs_device_, RS_STREAM_FISHEYE, RS_STREAM_COLOR, &color2fisheye_extrinsic_, &rs_error_);
@@ -691,7 +691,7 @@ namespace realsense_camera
       checkError();
     }
 
-    if(enable_imu_)
+    if (enable_imu_)
     {
       // Get offset between base frame and imu frame
       rs_get_motion_extrinsics_from(rs_device_, RS_STREAM_COLOR, &color2imu_extrinsic_, &rs_error_);
