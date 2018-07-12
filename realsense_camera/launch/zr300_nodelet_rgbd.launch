@@ -9,8 +9,8 @@
   <arg name="camera_type"     default="ZR300" />
 
   <!--  ZR300 specific features -->
-  <arg name="enable_fisheye"      default="true" />
-  <arg name="enable_imu"          default="true" />
+  <arg name="enable_fisheye"      default="false" />
+  <arg name="enable_imu"          default="false" />
 
   <!-- "serial_no" or "usb_port_id" should be a unique identifier to connect to a device -->
   <arg name="serial_no"     default="" />

@@ -329,19 +329,19 @@ namespace realsense_camera
         warning_msg = warning_msg + "\n\t\t\t\t- " + camera_warning_msg;
       }
 
-      if (rs_supports(rs_detected_device, RS_CAPABILITIES_ADAPTER_BOARD, &rs_error_))
-      {
-        const char * adapter_fw = rs_get_device_info(rs_detected_device,
-            RS_CAMERA_INFO_ADAPTER_BOARD_FIRMWARE_VERSION, &rs_error_);
-        checkError();
-        detected_camera_msg = detected_camera_msg + ", Adapter FW: " + adapter_fw;
-        std::string adapter_warning_msg = checkFirmwareValidation("adapter", adapter_fw, camera_name,
-              camera_serial_number);
-        if (!adapter_warning_msg.empty())
-        {
-          warning_msg = warning_msg + "\n\t\t\t\t- " + adapter_warning_msg;
-        }
-      }
+//      if (rs_supports(rs_detected_device, RS_CAPABILITIES_ADAPTER_BOARD, &rs_error_))
+//      {
+//        const char * adapter_fw = rs_get_device_info(rs_detected_device,
+//            RS_CAMERA_INFO_ADAPTER_BOARD_FIRMWARE_VERSION, &rs_error_);
+//        checkError();
+//        detected_camera_msg = detected_camera_msg + ", Adapter FW: " + adapter_fw;
+//        std::string adapter_warning_msg = checkFirmwareValidation("adapter", adapter_fw, camera_name,
+//              camera_serial_number);
+//        if (!adapter_warning_msg.empty())
+//        {
+//          warning_msg = warning_msg + "\n\t\t\t\t- " + adapter_warning_msg;
+//        }
+//      }
 
       if (rs_supports(rs_detected_device, RS_CAPABILITIES_MOTION_EVENTS, &rs_error_))
       {
@@ -876,7 +876,8 @@ namespace realsense_camera
    */
   ros::Time BaseNodelet::getTimestamp(rs_stream stream_index, double frame_ts)
   {
-    return ros::Time(camera_start_ts_) + ros::Duration(frame_ts * 0.001);
+    // return ros::Time(camera_start_ts_) + ros::Duration(frame_ts * 0.001);
+    return ros::Time::now();
   }
 
   /*

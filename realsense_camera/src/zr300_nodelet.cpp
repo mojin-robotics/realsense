@@ -641,19 +641,25 @@ namespace realsense_camera
     // call base nodelet method
     BaseNodelet::setFrameCallbacks();
 
-    fisheye_frame_handler_ = [&](rs::frame frame)  // NOLINT(build/c++11)
+    if (enable_[RS_STREAM_FISHEYE])
     {
-      publishTopic(RS_STREAM_FISHEYE, frame);
-    };
+        fisheye_frame_handler_ = [&](rs::frame frame)  // NOLINT(build/c++11)
+        {
+        publishTopic(RS_STREAM_FISHEYE, frame);
+        };
+    }
 
     ir2_frame_handler_ = [&](rs::frame frame)  // NOLINT(build/c++11)
     {
       publishTopic(RS_STREAM_INFRARED2, frame);
     };
 
-    rs_set_frame_callback_cpp(rs_device_, RS_STREAM_FISHEYE,
-        new rs::frame_callback(fisheye_frame_handler_), &rs_error_);
-    checkError();
+    if (enable_[RS_STREAM_FISHEYE])
+    {
+        rs_set_frame_callback_cpp(rs_device_, RS_STREAM_FISHEYE,
+          new rs::frame_callback(fisheye_frame_handler_), &rs_error_);
+        checkError();
+    }
 
     rs_set_frame_callback_cpp(rs_device_, RS_STREAM_INFRARED2, new rs::frame_callback(ir2_frame_handler_), &rs_error_);
     checkError();
@@ -674,29 +680,34 @@ namespace realsense_camera
     }
     checkError();
 
-    // Get offset between base frame and fisheye frame
-    rs_get_device_extrinsics(rs_device_, RS_STREAM_FISHEYE, RS_STREAM_COLOR, &color2fisheye_extrinsic_, &rs_error_);
-    if (rs_error_)
+    if (enable_[RS_STREAM_FISHEYE])
     {
-      ROS_ERROR_STREAM(nodelet_name_ << " - Verify camera is calibrated!");
+      // Get offset between base frame and fisheye frame
+      rs_get_device_extrinsics(rs_device_, RS_STREAM_FISHEYE, RS_STREAM_COLOR, &color2fisheye_extrinsic_, &rs_error_);
+      if (rs_error_)
+      {
+        ROS_ERROR_STREAM(nodelet_name_ << " - Verify camera is calibrated!");
+      }
+      checkError();
     }
-    checkError();
 
-    // Get offset between base frame and imu frame
-    rs_get_motion_extrinsics_from(rs_device_, RS_STREAM_COLOR, &color2imu_extrinsic_, &rs_error_);
-    if (rs_error_)
+    if (enable_imu_)
     {
-/*  Temporarily hardcoding the values until fully supported by librealsense API.  */
-      // ROS_ERROR_STREAM(nodelet_name_ << " - Verify camera is calibrated!");
-      ROS_WARN_STREAM(nodelet_name_ << " - Using Hardcoded extrinsic for IMU.");
-      rs_free_error(rs_error_);
-      rs_error_ = NULL;
-
-      color2imu_extrinsic_.translation[0] = -0.07;
-      color2imu_extrinsic_.translation[1] = 0.0;
-      color2imu_extrinsic_.translation[2] = 0.0;
+      // Get offset between base frame and imu frame
+      rs_get_motion_extrinsics_from(rs_device_, RS_STREAM_COLOR, &color2imu_extrinsic_, &rs_error_);
+      if (rs_error_)
+      {
+        /*  Temporarily hardcoding the values until fully supported by librealsense API.  */
+        // ROS_ERROR_STREAM(nodelet_name_ << " - Verify camera is calibrated!");
+        ROS_WARN_STREAM(nodelet_name_ << " - Using Hardcoded extrinsic for IMU.");
+        rs_free_error(rs_error_);
+        rs_error_ = NULL;
+        color2imu_extrinsic_.translation[0] = -0.07;
+        color2imu_extrinsic_.translation[1] = 0.0;
+        color2imu_extrinsic_.translation[2] = 0.0;
+        // checkError();
+      }
     }
-    // checkError();
   }
 
   /*
